@@ -48,9 +48,11 @@ def demo(args):
 
             disp = model(image1, image2, iters=args.valid_iters, test_mode=True)
             disp = disp.cpu().numpy()
-            disp = padder.unpad(disp)
-            file_stem = str(imfile1).split('/')[-1]
-            filename = os.path.join(output_directory, f"{file_stem}.png")
+            disp = padder.unpad(disp).squeeze()
+            file_stem = str(imfile1).split('/')[-1].split(".")[0]
+
+            if args.save_numpy:
+                np.save(output_directory / f"{file_stem}.npy", disp.squeeze())
             plt.imsave(output_directory / f"{file_stem}.png", disp.squeeze(), cmap='jet')
             # disp = np.round(disp * 256).astype(np.uint16)
             # cv2.imwrite(filename, cv2.applyColorMap(cv2.convertScaleAbs(disp.squeeze(), alpha=0.01),cv2.COLORMAP_JET), [int(cv2.IMWRITE_PNG_COMPRESSION), 0])
