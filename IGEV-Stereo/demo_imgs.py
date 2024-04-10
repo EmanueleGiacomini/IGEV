@@ -33,8 +33,10 @@ def demo(args):
     output_directory.mkdir(exist_ok=True)
 
     with torch.no_grad():
-        left_images = sorted(glob.glob(args.left_imgs, recursive=True))
-        right_images = sorted(glob.glob(args.right_imgs, recursive=True))
+        left_images = sorted([x for x in Path(args.left_imgs).glob("*.png")])
+        right_images = sorted([x for x in Path(args.right_imgs).glob("*.png")])
+        # left_images = sorted(glob.glob(args.left_imgs, recursive=True))
+        # right_images = sorted(glob.glob(args.right_imgs, recursive=True))
         print(f"Found {len(left_images)} images. Saving files to {output_directory}/")
 
         for (imfile1, imfile2) in tqdm(list(zip(left_images, right_images))):
@@ -47,7 +49,7 @@ def demo(args):
             disp = model(image1, image2, iters=args.valid_iters, test_mode=True)
             disp = disp.cpu().numpy()
             disp = padder.unpad(disp)
-            file_stem = imfile1.split('/')[-2]
+            file_stem = str(imfile1).split('/')[-1]
             filename = os.path.join(output_directory, f"{file_stem}.png")
             plt.imsave(output_directory / f"{file_stem}.png", disp.squeeze(), cmap='jet')
             # disp = np.round(disp * 256).astype(np.uint16)

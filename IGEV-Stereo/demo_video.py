@@ -42,8 +42,10 @@ model = model.module
 model.to(DEVICE)
 model.eval()
 
-left_images = sorted(glob.glob(args.left_imgs, recursive=True))
-right_images = sorted(glob.glob(args.right_imgs, recursive=True))
+left_images = sorted([x for x in Path(args.left_imgs).glob("*.png")])
+right_images = sorted([x for x in Path(args.right_imgs).glob("*.png")])
+# left_images = sorted(glob.glob(args.left_imgs, recursive=True))
+# right_images = sorted(glob.glob(args.right_imgs, recursive=True))
 print(f"Found {len(left_images)} images.")
 
 
